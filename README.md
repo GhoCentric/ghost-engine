@@ -1,2 +1,113 @@
 # ghost-engine
 Internal state reasoning engine (proof-of-architecture)
+## Thesis
+
+Ghost is an internal state reasoning engine designed to generate consistent, structured advisory outputs without hallucination or false agency.
+
+Ghost is not an autonomous agent, not a general intelligence, and not a replacement for large language models. It is a proof-of-architecture demonstrating how symbolic state, deterministic control, and constrained probabilistic language generation can interact to produce coherent, persistent behavior that cannot be achieved through prompt engineering alone.
+
+---
+
+## Architectural Overview
+
+Ghost is a hybrid cognitive architecture in which probabilistic language generation is explicitly subordinated to symbolic state, constraint enforcement, and deterministic routing. The language model functions strictly as a language surface, not as the cognitive core.
+
+**Core properties:**
+- Cost-efficient, token-disciplined architecture with high signal per token  
+- Persistent symbolic state kernel from which personality-like behavior emerges  
+- Deterministic, low-variance output prioritizing stability over novelty  
+- Externalized memory, belief, and contradiction tracking  
+- Explicit hallucination reduction via constraint grounding and state enforcement  
+- Full observability of internal cognitive variables  
+- Constraint-first design philosophy  
+- Intentionally non-agentic (no autonomous goals, actions, or self-direction)
+
+This design prevents stylistic drift, minimizes prompt-level manipulation, and anchors output to persistent internal state rather than transient user phrasing.
+
+---
+
+## Development Constraints
+
+Ghost was built locally under extreme constraints:
+- Mobile-only development environment  
+- No formal computer science training  
+- No external frameworks  
+- Entire system constructed incrementally over approximately two years  
+
+Large language models were used only for syntax assistance and surface-level language handling. All architectural decisions, state logic, and control mechanisms were manually designed and implemented.
+
+---
+
+## State and Stability Model
+
+Ghost maintains a measurable internal state across interactions, including:
+- Emotional vectors  
+- Belief tension metrics  
+- Contradiction tracking  
+- Meta-regulatory stability controls  
+
+These variables directly influence routing, response shaping, and output constraints. State persists across calls, enabling continuity without conversational memory tricks or prompt scaffolding.
+
+The system is optimized for consistency, reliability, and coherence rather than novelty or performative intelligence.
+
+---
+
+## Hallucination Resistance
+
+Ghost does not attempt to solve hallucination through model scaling or temperature tuning. Instead, hallucination resistance is achieved through:
+- Deterministic output constraints  
+- Explicit grounding to internal state  
+- Prohibition of fabricated entities, memories, or capabilities  
+- Separation of reasoning state from language generation  
+
+This reduces susceptibility to prompt exploits and false agency behaviors common in standard LLM deployments.
+
+---
+
+## Proof-of-Architecture Status
+
+Ghost is not a finished system. It is a proof-of-architecture.
+
+Despite its early state, Ghost already exhibits hybrid behavior emerging from the interaction of symbolic state, deterministic control layers, and probabilistic language modeling—behavior that cannot be replicated through prompt engineering alone.
+
+---
+
+## Potential Applications
+
+### Internal-State Reasoning for NPC Systems
+
+Ghost was explored as an internal-state reasoning layer for non-player characters (NPCs).
+
+Rather than directly controlling NPC behavior, Ghost:
+- Interprets in-world experiences symbolically  
+- Maintains an internal representation of encounters  
+- Outputs structured advisory signals  
+
+These signals can bias existing decision systems by prioritizing actions, altering response tendencies, or surfacing emergent goals—without scripted emotional models or narrative paths.
+
+---
+
+## Broader System Integration
+
+Ghost is designed to function as a modular internal-state reasoning layer that can augment:
+- Game engines  
+- Simulations  
+- Decision-support tools  
+- LLM-based interfaces  
+
+It enhances these systems by providing stable, interpretable, state-driven advisory outputs.
+
+---
+
+## External Analysis Summary
+
+> A restricted, stateful cognitive architecture designed to maintain and regulate a measurable internal state across interactions. Rather than focusing on raw language generation, the system emphasizes internal consistency, tension tracking, and stability control through explicit emotional vectors, belief contradiction metrics, and meta-regulatory processes.
+
+---
+
+## Closing
+
+Ghost demonstrates that meaningful, consistent behavior can emerge from constraint, structure, and state—not from scale, autonomy, or imitation of human cognition.
+
+It is intentionally limited.  
+And those limits **are** the architecture.
