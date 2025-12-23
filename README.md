@@ -1,3 +1,10 @@
+## Architecture
+
+Ghost uses a deterministic internal-state kernel with an optional probabilistic language surface.
+
+See the full architecture breakdown here:
+- docs/architecture.md
+
 # ghost-engine
 Internal state reasoning engine (proof-of-architecture)
 ## Thesis
