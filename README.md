@@ -111,6 +111,20 @@ It enhances these systems by providing stable, interpretable, state-driven advis
 
 ---
 
+## Roadmap
+
+Planned architectural milestones and future development phases are documented in:
+
+- `ROADMAP.md`
+
+---
+
+## License
+
+Licensed under the Apache License 2.0.
+
+---
+
 ## Closing
 
 Ghost demonstrates that meaningful, consistent behavior can emerge from constraint, structure, and state—not from scale, autonomy, or imitation of human cognition.
