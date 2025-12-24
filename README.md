@@ -9,12 +9,10 @@ Ghost is not an autonomous agent, not a general intelligence, and not a replacem
 ---
 
 ## Architectural Overview
-
-## Architecture
 Ghost uses a deterministic internal-state kernel with an optional probabilistic language surface.
-
 See the full architecture breakdown here:
 - docs/architecture.md
+
 Ghost is a hybrid cognitive architecture in which probabilistic language generation is explicitly subordinated to symbolic state, constraint enforcement, and deterministic routing. The language model functions strictly as a language surface, not as the cognitive core.
 
 **Core properties:**
