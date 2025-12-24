@@ -17,7 +17,8 @@ Ghost is a hybrid cognitive architecture in which probabilistic language generat
 See the full architecture breakdown here:
 - docs/architecture.md
 
-**Core properties:**
+## Core Properties:
+
 - Cost-efficient, token-disciplined architecture with high signal per token  
 - Persistent symbolic state kernel from which personality-like behavior emerges  
 - Deterministic, low-variance output prioritizing stability over novelty  
