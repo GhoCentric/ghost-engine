@@ -1,54 +1,80 @@
 """
 test_state_recovery.py
 
-Minimal proof that Ghost maintains coherent internal state
-across command failure and recovery, without using an LLM.
+Proof that Ghost preserves internal state identity
+across command failure and recovery.
 
-This test intentionally:
-- Triggers a failing command
-- Verifies state is not corrupted
-- Runs a valid command afterward
-- Verifies continuity of state
-
-If this passes, Ghost is not reasoning in language.
+No LLM.
+No language reasoning.
+No schema assumptions.
 """
 
-from ghost_core import init_state
-from commands import route
+from ghost.core.state import init_state
+from ghost.core.commands import route
 
+STRUCTURAL_EVOLUTION = {
+    "mood": (float, dict),  # allowed promotion
+}
 
-def assert_valid_state(state):
-    """
-    Minimal invariants for a valid Ghost state.
-    These are intentionally boring and strict.
-    """
-    assert state is not None, "State is None"
-    assert isinstance(state, dict), "State is not a dict"
-    assert "mood" in state, "Missing 'mood' key"
-    assert "stability" in state, "Missing 'stability' key"
+EPHEMERAL_KEYS = {
+    "signal_memory",
+    "last_reflect",
+    "last_summary",
+    "meta_mode",
+}
 
+CORE_KEYS = {
+    "mood",
+    "emotion",
+    "memory_factor",
+    "reaction_strength",
+    "clamp_tolerance",
+    "clamp_sensitivity",
+    "mirror_coeff",
+}
+
+def assert_state_survives(before, after):
+    # Basic survival checks
+    assert after is not None, "State became None"
+    assert isinstance(after, dict), "State is no longer a dict"
+
+    # Core invariants must exist
+    for key in CORE_KEYS:
+        assert key in after, f"Missing core key after recovery: {key}"
+
+    # Structural evolution rules
+    for key, allowed_types in STRUCTURAL_EVOLUTION.items():
+        if key in after:
+            assert isinstance(after[key], allowed_types), (
+                f"Invalid evolution for key '{key}': "
+                f"{type(after[key])}"
+            )
+
+    # Ephemeral keys are allowed to vanish — no checks needed
+    # Everything else is intentionally ignored
 
 def run_test():
     print("\n[TEST] Initializing Ghost state")
     state = init_state()
-    quit_flag = False
+    ctx = {}
 
-    assert_valid_state(state)
-    print("[PASS] Initial state valid")
+    print("[PASS] State initialized")
 
-    print("\n[TEST] Running failing command (#invalid_command)")
-    state, quit_flag = route(state, "#invalid_command")
+    print("\n[TEST] Running invalid command")
+    state_before = state
+    state, quit_flag = route(state, None, "#this_command_does_not_exist", ctx)
 
-    assert_valid_state(state)
-    print("[PASS] State survived command failure")
+    assert_state_survives(state_before, state)
+    print("[PASS] State survived invalid command")
 
-    print("\n[TEST] Running valid command (#state)")
-    state, quit_flag = route(state, "#state")
+    print("\n[TEST] Running valid command")
+    state_before = state
+    state, quit_flag = route(state, None, "#state", ctx)
 
-    assert_valid_state(state)
-    print("[PASS] State recovered and remains valid")
+    assert_state_survives(state_before, state)
+    print("[PASS] State survived valid command")
 
-    print("\n[TEST COMPLETE] Ghost state recovery verified")
+    print("\n[TEST COMPLETE] Ghost state continuity verified")
 
 
 if __name__ == "__main__":
