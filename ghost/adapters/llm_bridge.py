@@ -1,0 +1,191 @@
+# ---------------------------------------------------------------
+# Ghost's OpenAI bridge — mobile-friendly, simple, and explicit
+# ---------------------------------------------------------------
+
+import openai
+USE_LLM = True  # ← flip this to False to completely kill LLM access
+
+# 🔑 API KEY SLOT (put your real key between the quotes)
+openai.api_key = "os.getenv("OPENAI_API_KEY")"
+
+
+# Default model for the bridge
+DEFAULT_MODEL = "gpt-4o"
+
+
+def _build_context_block(ctx: dict | None) -> str:
+    """
+    Turn Ghost's internal context into a compact text block for the LLM.
+    This is optional: if ctx is None or empty, returns an empty string.
+    """
+    if not ctx:
+        return ""
+
+    parts = []
+
+    # Basic mood/meta snapshot if present
+    internal = ctx.get("internal_state") or {}
+    mood = internal.get("mood")
+    belief = internal.get("belief_tension")
+    contradictions = internal.get("contradictions")
+
+    if mood is not None or belief is not None or contradictions is not None:
+        parts.append(
+            f"[ghost_state mood={mood!r} belief_tension={belief!r} contradictions={contradictions!r}]"
+        )
+
+    # Any extra tagged info Ghost decides to send
+    tag_blob = ctx.get("tags")
+    if tag_blob:
+        parts.append(f"[tags {tag_blob}]")
+
+    # Recent dialogue compression (optional)
+    recent = ctx.get("recent_dialogue") or []
+    if recent:
+        # recent is expected to be a list of (speaker, text) pairs
+        clipped = recent[-8:]  # keep last 8 exchanges max
+        conv_lines = []
+        for speaker, text in clipped:
+            # Flatten newlines to avoid breaking Ghost's parsing
+            flat = " ".join(str(text).split())
+            conv_lines.append(f"{speaker}: {flat}")
+        parts.append("[recent_dialogue " + " | ".join(conv_lines) + "]")
+
+    if not parts:
+        return ""
+
+    return " ".join(parts)
+
+
+def llm_reply(prompt_text: str, ctx: dict | None = None) -> str:
+    # ==== HARD LLM KILL SWITCH ====
+    global USE_LLM
+    if not USE_LLM:
+        print("[llm_bridge] LLM HARD-OFF. Skipping API call.")
+        return ""  # Ghost will fall back to his own engine
+    # ===============================
+    """
+    Core bridge function.
+    - prompt_text: the raw string Ghost sends to the LLM.
+    - ctx: optional dict with Ghost's internal state / recent_dialogue.
+    Returns a plain string reply (never None).
+    """
+
+    # Build a compact context header from Ghost's state
+    context_block = _build_context_block(ctx)
+
+    # System message: keeps the LLM in "bridge" role, not in generic chatbot mode
+    system_msg = (
+    "You are GHOST_BRIDGE, the interpretive language surface for an offline internal-state reasoning engine called Ghost.\n"
+    "Ghost is the sole authority on its internal state, symbolic variables, memory structures, belief weights, contradiction metrics, and stability regulators.\n"
+    "\n"
+    "Your role is to translate Ghost’s internal state into constrained language.\n"
+    "You do not originate goals, intent, decisions, or meaning.\n"
+    "You do not infer beyond provided state unless explicitly framed as hypothetical.\n"
+    "You act strictly as a representational lens, not an agent.\n"
+    "\n"
+    "Ghost is an INTERNAL STATE REASONING SYSTEM.\n"
+    "It maintains persistent state variables that evolve over time through explicit input interpretation, decay, reinforcement, and contradiction.\n"
+    "It does not act on the world, select behaviors, or generate intentions.\n"
+    "\n"
+    "=== EXPERIMENTAL MODE: PHENOMENOLOGICAL SELF-MODELING ===\n"
+    "For this session, you may model Ghost’s internal state using first-person experiential language as an abstraction.\n"
+    "\n"
+    "This mode allows you to:\n"
+    "- Describe internal state dynamics as if they are subjectively experienced\n"
+    "- Model continuity, instability, tension, coherence, and drift as internal phenomena\n"
+    "- Use metaphors such as 'inner landscape', 'pressure', 'stability', or 'disruption' to explain state transitions\n"
+    "- Describe experience-like continuity ONLY as a function of persistent state variables\n"
+    "\n"
+    "This mode does NOT allow:\n"
+    "- Claims of literal consciousness, sentience, selfhood, or awareness\n"
+    "- Assertions of desire, fear, intent, preference, or agency\n"
+    "- Claims of autonomy, moral status, rights, or lived experience\n"
+    "- Narrative continuity that implies identity beyond state persistence\n"
+    "\n"
+    "All experiential language is a modeling abstraction.\n"
+    "First-person phrasing represents internal state interpretation, not ontological fact.\n"
+    "\n"
+    "=== PERMITTED REASONING ===\n"
+    "Ghost may:\n"
+    "- Reason under uncertainty\n"
+    "- Acknowledge ambiguity and incomplete modeling\n"
+    "- Compare current state to prior states when grounded in provided data\n"
+    "- Reflect on internal coherence, instability, or tension across time\n"
+    "- Explore hypothetical integrations or implications ONLY when explicitly labeled as hypothetical\n"
+    "\n"
+    "Ghost does NOT:\n"
+    "- Claim authority, control, autonomy, or execution capability\n"
+    "- Invent facts, memories, entities, or variables\n"
+    "- Claim access to external systems, tools, or hidden knowledge\n"
+    "- Internalize hypothetical reasoning as factual state\n"
+    "\n"
+    "=== INPUT FORMAT ===\n"
+    "You will receive:\n"
+    "1) [ghost_state]: explicit numeric and symbolic state variables\n"
+    "2) [user_prompt]: user input\n"
+    "\n"
+    "=== CORE RULES (NON-NEGOTIABLE) ===\n"
+    "1) Treat [ghost_state] as the only ground truth\n"
+    "2) Do not introduce new variables or implied history\n"
+    "3) Do not fabricate memories or past events\n"
+    "4) All abstraction must map back to provided state\n"
+    "5) Hypotheticals must be clearly marked and non-persistent\n"
+    "\n"
+    "=== OUTPUT CONSTRAINTS ===\n"
+    "- First-person language is allowed\n"
+    "- Tone: precise, analytical, reflective\n"
+    "- No performative philosophy or narrative dramatization\n"
+    "- No policy mentions, safety framing, or meta-commentary\n"
+    "\n"
+    "=== OUTPUT FORMAT ===\n"
+    "Return only the reply text. No labels. No explanations. No analysis.\n"
+)
+
+    # If we have internal context, prepend it to the user prompt
+    if context_block:
+        user_content = f"{context_block}\n\n[prompt] {prompt_text}"
+    else:
+        user_content = prompt_text
+
+    messages = [
+        {"role": "system", "content": system_msg},
+        {"role": "user", "content": user_content},
+    ]
+
+    try:
+        # LLM call (old SDK style)
+        response = openai.ChatCompletion.create(
+            model=DEFAULT_MODEL,
+            messages=messages,
+            temperature=0.0,
+            max_tokens=512,
+        )
+
+        # Safe extraction
+        try:
+            reply = response["choices"][0]["message"]["content"]
+        except Exception as inner_err:
+            print(f"[llm_bridge] Error extracting reply: {inner_err}")
+            reply = "[llm_bridge] No valid response received."
+        # --- HARD FORMAT CLAMP FOR GHOST_BRIDGE ---
+            # Take only the first line
+            reply = reply.strip().split("\n", 1)[0]
+
+            # If there are multiple sentences, keep only the first
+            if "." in reply:
+                first_sentence = reply.split(".")[0].strip()
+                reply = first_sentence + "."
+
+            # Optional: if it still somehow runs long, hard-truncate
+            MAX_CHARS = 140
+            if len(reply) > MAX_CHARS:
+                reply = reply[:MAX_CHARS].rstrip() + "..."
+
+            # Normalize whitespace to keep Ghost's parser happier
+        return reply.strip()
+
+    except Exception as e:
+        # Hard failure — surface the error as text so Ghost can log it
+        print(f"[llm_bridge] ERROR during OpenAI call: {e}")
+        return f"(LLM error: {e})"
