@@ -1,41 +1,67 @@
-Ghost Engine Documentation
-This folder contains supporting documentation for the Ghost internal-state reasoning engine.
-Ghost is not a single model, algorithm, or agent.
-It is a layered system designed to maintain and regulate a persistent internal state, then expose that state to external systems through constraints rather than direct control.
-Ghost does not generate goals, actions, or dialogue on its own.
-It evaluates internal conditions and limits what downstream systems are allowed to do.
-Core Idea
-Most NPC or AI systems conflate three things:
-internal state
-decision-making
-language output
-Ghost deliberately separates them.
-Ghost maintains internal symbolic state (beliefs, tensions, stability, etc.), updates that state deterministically, and then outputs advisory constraints that bias or restrict behavior elsewhere.
-Language, actions, and animation remain external.
-High-Level Data Flow
-At a high level, Ghost operates like this:
-An external system provides a situation or stimulus
-Ghost updates its internal symbolic state
-Internal state produces constraints and advisory signals
-An external system selects dialogue or actions within those constraints
-Ghost never directly chooses dialogue or actions.
-It only limits and biases what is possible.
-Why This Exists
-Ghost exists to solve problems that appear when language generation is treated as cognition:
-narrative drift
-inconsistent personality
-prompt exploitation
-hallucinated intent or memory
-opaque decision-making
-By making state explicit and language downstream, Ghost prioritizes:
-consistency over novelty
-observability over performance
-constraint over improvisation
-What Ghost Is Not
-Ghost is intentionally limited.
-It is not:
-an autonomous agent
-a general intelligence
-a dialogue system
-a persona generator
-Those limits are not shortcomings — they are the architecture.
+# Ghost Engine Documentation
+
+This folder contains supporting technical documentation for the Ghost internal-state reasoning engine.
+
+Ghost is not a single model, algorithm, or agent. It is a layered system designed to maintain, regulate, and expose a persistent internal symbolic state. That state is used to produce advisory signals and constraints that bias downstream systems — not to directly control dialogue, actions, or planning.
+
+Ghost does not generate goals, actions, or dialogue on its own. It evaluates internal conditions and shapes what downstream systems are likely or permitted to produce through constraint-first routing and gating.
+
+---
+
+## Core Idea
+
+Most AI and NPC systems conflate three distinct concerns:
+
+- Internal state and reasoning  
+- Decision-making  
+- Language or action output  
+
+Ghost deliberately separates these layers.
+
+Ghost maintains an explicit internal symbolic state (belief tension, emotional vectors, stability metrics, contradiction tracking), updates that state deterministically, and then emits advisory signals that bias or constrain downstream behavior.
+
+Language generation, animation, and action selection remain external.
+
+---
+
+## High-Level Data Flow
+
+At a high level, Ghost operates as follows:
+
+1. An external system provides a situation, stimulus, or query  
+2. Ghost updates its internal symbolic state deterministically  
+3. Internal state produces advisory signals, routing preferences, or output gates  
+4. An external system selects dialogue or actions within those constraints  
+
+Ghost never directly selects dialogue or actions. It selects internal strategies and constraints that shape downstream behavior without exercising agency or control.
+
+---
+
+## Why This Exists
+
+Ghost exists to address failure modes common in language-driven systems where language generation is treated as cognition:
+
+- Narrative drift
+- Inconsistent personality
+- Prompt exploitation
+- Hallucinated intent or memory
+- Opaque or irreproducible reasoning
+
+By making internal state explicit and language downstream, Ghost prioritizes:
+
+- Consistency over novelty  
+- Observability over performance  
+- Constraint over improvisation  
+
+---
+
+## What Ghost Is Not
+
+Ghost is intentionally limited. It is not:
+
+- An autonomous agent  
+- A general intelligence  
+- A dialogue system  
+- A persona generator  
+
+These limits are not shortcomings — they define the architecture.
