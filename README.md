@@ -84,13 +84,23 @@ The system is optimized for consistency, reliability, and coherence rather than 
 
 ## Hallucination Resistance
 
-Ghost does not attempt to solve hallucination through model scaling or temperature tuning. Instead, hallucination resistance is achieved through:
-- Deterministic output constraints  
-- Explicit grounding to internal state  
-- Prohibition of fabricated entities, memories, or capabilities  
-- Separation of reasoning state from language generation  
+## What “Hallucination” Means in This Project
 
-This reduces susceptibility to prompt exploits and false agency behaviors common in standard LLM deployments.
+When this project refers to hallucination, it does **not** mean semantic correctness or factual accuracy guarantees from a language model.
+
+In Ghost, hallucination refers to:
+- Fabricated internal state (invented memories, beliefs, or emotions)
+- False agency (claims of autonomy, intent, or capability the system does not have)
+- Unconstrained behavioral drift caused by prompt phrasing
+- Output that violates internal state constraints or routing rules
+
+Ghost reduces these failure modes through:
+- Deterministic state enforcement
+- Explicit output gating and strategy routing
+- Separation of internal reasoning state from language generation
+- Prohibition of fabricated capabilities or memory
+
+This is an architectural constraint problem, not a model-scale or temperature-tuning solution.
 
 ---
 
@@ -126,12 +136,6 @@ Ghost is designed to function as a modular internal-state reasoning layer that c
 - LLM-based interfaces  
 
 It enhances these systems by providing stable, interpretable, state-driven advisory outputs.
-
----
-
-## External Analysis Summary
-
-> A restricted, stateful cognitive architecture designed to maintain and regulate a measurable internal state across interactions. Rather than focusing on raw language generation, the system emphasizes internal consistency, tension tracking, and stability control through explicit emotional vectors, belief contradiction metrics, and meta-regulatory processes.
 
 ---
 
