@@ -1,6 +1,6 @@
 # Ghost Engine — High-Level Architecture
 
-Ghost is an internal-state reasoning engine designed around explicit symbolic state, deterministic control, and constrained output shaping.
+Ghost is an internal-state reasoning engine designed around explicit symbolic state, deterministic control, and constrained output shaping. Ghost does not attempt to model cognition or intelligence; it enforces consistency and constraint over downstream systems.
 
 This document describes the intended architecture and how the implemented components relate to that design. Some layers are conceptual abstractions that are partially implemented or distributed across modules rather than existing as single subsystems.
 
