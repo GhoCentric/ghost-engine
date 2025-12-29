@@ -1,45 +1,113 @@
-## Ghost Engine – High-Level Architecture
-┌──────────────────────────────────────────────┐ │                EXTERNAL INPUT                │ │        (User, World Events, Systems)         │ └───────────────────────────┬──────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │              INPUT PROCESSING                │ │  - Signal parsing                            │ │  - Memory recall triggers                   │ │  - Sanitization / normalization             │ └───────────────────────────┬──────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │          PERSISTENT MEMORY SYSTEM             │ │  - Long-term symbolic memory                 │ │  - Recall weighting & decay                  │ │  - Historical state snapshots                │ └───────────────────────────┬──────────────────┘ │ ▼ ┌────────────────────────────────────────────────────────────┐ │          INTERNAL STATE KERNEL (DETERMINISTIC CORE)         │ │                                                            │ │  Emotional Vectors        Belief Tension                   │ │  Mood & Band              Contradiction Tracking           │ │  Stability Metrics        Reaction Strength                │ │  Awareness / Depth Axis   Clamp Tolerance & Sensitivity    │ │  Global Tension           Personality Profile (optional)   │ │                                                            │ │  ↺  Meta-Regulatory Feedback Loop (Stability Control)      │ └───────────────────────────┬────────────────────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │         STATE UPDATE & ENFORCEMENT            │ │  - Deterministic rule application             │ │  - Constraint enforcement                    │ │  - Hallucination prevention                  │ └───────────────────────────┬──────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │     CONTEXT CONSTRAINT VECTOR (C.C.V.)        │ │  - State-derived bias weights                │ │  - Action / response suppression             │ │  - Output shaping parameters                 │ └───────────────────────────┬──────────────────┘ ┌─────────┴─────────┐ │                   │ ▼                   ▼
-┌────────────────────────────┐   ┌──────────────────────────────┐ │ DETERMINISTIC OUTPUT PATH  │   │  OPTIONAL LLM RENDERING LAYER │ │  (NO LLM REQUIRED)         │   │  (PLR – Probabilistic Only)   │ │                            │   │                              │ │ - Symbolic templates       │   │ - Prompt constrained by CCV  │ │ - Rule-based language      │   │ - No state authority          │ │ - Guaranteed consistency  │   │ - No memory or agency         │ └───────────────┬────────────┘   └───────────────┬──────────────┘ │                                │ ▼                                ▼ ┌──────────────────────────────────────────────┐ │            OUTPUT VALIDATION LAYER            │ │  - State consistency check                   │ │  - Constraint compliance                    │ │  - Hallucination rejection                  │ └───────────────────────────┬──────────────────┘ │ ┌─────────┴─────────┐ ▼                   ▼ ┌──────────────┐     ┌──────────────┐ │ ACCEPTED     │     │ DISCARDED     │ │ OUTPUT       │     │ OUTPUT        │ └──────────────┘     └──────────────┘
-### Design Notes
+# Ghost Engine — High-Level Architecture
+
+Ghost is an internal-state reasoning engine designed around explicit symbolic state, deterministic control, and constrained output shaping.
+
+This document describes the intended architecture and how the implemented components relate to that design. Some layers are conceptual abstractions that are partially implemented or distributed across modules rather than existing as single subsystems.
+
+---
+
+## High-Level Flow (Conceptual)
+┌──────────────────────────────────────────────┐
+│               EXTERNAL INPUT                 │
+│        (User, World Events, Systems)          │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
+│              INPUT NORMALIZATION              │
+│  - Signal parsing                             │
+│  - Sanitization                               │
+│  - Recall triggers                            │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
+│          PERSISTENT MEMORY LAYER              │
+│  - Symbolic memory                            │
+│  - Recall weighting & decay                   │
+│  - Historical snapshots                      │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
+│      INTERNAL STATE KERNEL (DETERMINISTIC)    │
+│                                              │
+│  • Emotional vectors                          │
+│  • Belief tension                             │
+│  • Contradiction tracking                     │
+│  • Stability & pressure metrics               │
+│  • Awareness / depth bounds                   │
+│                                              │
+│  ↺ Meta-regulatory control loop               │
+│    (prevents drift & collapse)                │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
+│        STATE ENFORCEMENT & ROUTING             │
+│  - Deterministic rule application              │
+│  - Strategy selection                          │
+│  - Output gating / suppression                 │
+│  - Hallucination prevention                   │
+└───────────────────────────┬──────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────┐
+│      CONTEXT CONSTRAINT SNAPSHOT (CCS)        │
+│  - Immutable state snapshot                   │
+│  - Bias weights                               │
+│  - Allowed / forbidden modes                  │
+└───────────────────────────┬──────────────────┘
+              ┌─────────────┴─────────────┐
+              │                           │
+              ▼                           ▼
+┌──────────────────────────────┐   ┌──────────────────────────────┐
+│ DETERMINISTIC OUTPUT PATH     │   │ OPTIONAL LANGUAGE RENDERER   │
+│ (No LLM required)             │   │ (LLM as surface only)        │
+│                                │   │                              │
+│ - Symbolic templates           │   │ - Prompt constrained by CCS  │
+│ - Rule-based output            │   │ - No state authority         │
+│ - Guaranteed consistency      │   │ - No memory or agency        │
+└───────────────┬──────────────┘   └───────────────┬──────────────┘
+                │                                  │
+                ▼                                  ▼
+┌──────────────────────────────────────────────┐
+│            OUTPUT VALIDATION LAYER            │
+│  - State consistency check                   │
+│  - Constraint compliance                    │
+│  - Hallucination rejection                  │
+└───────────────────────────┬──────────────────┘
+                            │
+                ┌───────────┴───────────┐
+                ▼                       ▼
+        ┌──────────────┐       ┌──────────────┐
+        │ ACCEPTED     │       │ DISCARDED     │
+        │ OUTPUT       │       │ OUTPUT        │
+        └──────────────┘       └──────────────┘
+
+---
+
+## Design Notes
+
 - Ghost is not an autonomous agent.
-- Ghost does not select actions or goals.
+- Ghost does not select actions, goals, or plans.
 - All behavior emerges from persistent symbolic state.
 - Language models are optional and strictly subordinated.
 - No output can directly mutate internal state.
-
-# Ghost Architecture
-
-This document describes the internal structure and design philosophy of the Ghost engine.
-
-Ghost is an internal-state reasoning system. It does not act, plan, or pursue goals. It maintains a constrained internal state and produces structured advisory outputs derived from that state.
 
 ---
 
 ## Core Design Principle
 
-Language is not the cognitive core.
+**Language is not the cognitive core.**
 
-All reasoning occurs outside the language model. The language model is used only as a controlled surface for expression after state evaluation and constraint enforcement.
-
----
-
-## High-Level Flow
-
-1. External input is received
-2. Input is routed through deterministic control logic
-3. Internal state variables are updated (or remain unchanged)
-4. Stability and constraint checks are enforced
-5. A state snapshot is generated
-6. Language is produced strictly from the snapshot
-
-There is no autonomous loop, self-directed planning, or goal formation.
+All reasoning occurs outside the language model. The LLM, when enabled, functions only as a controlled rendering surface after state evaluation and constraint enforcement.
 
 ---
 
 ## Internal State Variables
 
-Ghost maintains explicit internal variables, including but not limited to:
+Ghost maintains explicit, bounded, and observable internal variables, including:
 
 - Emotional vectors
 - Belief tension metrics
@@ -47,13 +115,13 @@ Ghost maintains explicit internal variables, including but not limited to:
 - Stability thresholds
 - Memory persistence factors
 
-These variables are observable, bounded, and mechanically enforced.
+These variables are mechanically enforced and persist across interactions.
 
 ---
 
-## Hallucination Control
+## Hallucination Resistance (Architectural)
 
-Ghost does not rely on temperature tuning or prompt complexity to prevent hallucination.
+Ghost does not rely on temperature tuning, prompt complexity, or sampling tricks to reduce hallucination.
 
 Instead, hallucination resistance is achieved through:
 
@@ -62,7 +130,7 @@ Instead, hallucination resistance is achieved through:
 - Prohibition of undefined variables
 - Separation of reasoning state from language generation
 
-If information is not present in state, it is not expressed.
+If information is not present in state, it cannot be asserted.
 
 ---
 
@@ -70,19 +138,20 @@ If information is not present in state, it is not expressed.
 
 Ghost is intentionally non-agentic.
 
-It:
-- Does not initiate actions
-- Does not pursue goals
-- Does not simulate identity or selfhood
-- Does not generate plans
+It does not:
 
-This constraint is foundational, not optional.
+- Initiate actions
+- Pursue goals
+- Generate plans
+- Simulate identity or selfhood
+
+These constraints are foundational, not optional.
 
 ---
 
 ## Proof-of-Architecture Status
 
-Ghost is an exploratory system demonstrating how symbolic state, deterministic control, and constrained probabilistic language can interact to produce consistent behavior.
+Ghost is an exploratory system demonstrating how symbolic state, deterministic control, and constrained probabilistic language can interact to produce stable, coherent behavior.
 
 It is not a finished product.
-It is a working architectural thesis.
+It is an architectural thesis implemented in working code.
