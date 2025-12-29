@@ -9,12 +9,18 @@
 
   "pressure_modifiers": {
     "goal_pressure": {
-      "explore": 0.4,
-      "reflect": -0.2
+      "scale": 1.0,
+      "bias": {
+        "explore": 0.4,
+        "reflect": -0.2
+      }
     },
     "exploration_pressure": {
-      "explore": 0.5,
-      "respond": -0.1
+      "scale": 1.0,
+      "bias": {
+        "explore": 0.5,
+        "respond": -0.1
+      }
     }
   },
 
