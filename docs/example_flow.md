@@ -1,44 +1,161 @@
-## Ghost Engine – High-Level Architecture
-┌──────────────────────────────────────────────┐ │                EXTERNAL INPUT                │ │        (User, World Events, Systems)         │ └───────────────────────────┬──────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │              INPUT PROCESSING                │ │  - Signal parsing                            │ │  - Memory recall triggers                   │ │  - Sanitization / normalization             │ └───────────────────────────┬──────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │          PERSISTENT MEMORY SYSTEM             │ │  - Long-term symbolic memory                 │ │  - Recall weighting & decay                  │ │  - Historical state snapshots                │ └───────────────────────────┬──────────────────┘ │ ▼ ┌────────────────────────────────────────────────────────────┐ │          INTERNAL STATE KERNEL (DETERMINISTIC CORE)         │ │                                                            │ │  Emotional Vectors        Belief Tension                   │ │  Mood & Band              Contradiction Tracking           │ │  Stability Metrics        Reaction Strength                │ │  Awareness / Depth Axis   Clamp Tolerance & Sensitivity    │ │  Global Tension           Personality Profile (optional)   │ │                                                            │ │  ↺  Meta-Regulatory Feedback Loop (Stability Control)      │ └───────────────────────────┬────────────────────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │         STATE UPDATE & ENFORCEMENT            │ │  - Deterministic rule application             │ │  - Constraint enforcement                    │ │  - Hallucination prevention                  │ └───────────────────────────┬──────────────────┘ │ ▼ ┌──────────────────────────────────────────────┐ │     CONTEXT CONSTRAINT VECTOR (C.C.V.)        │ │  - State-derived bias weights                │ │  - Action / response suppression             │ │  - Output shaping parameters                 │ └───────────────────────────┬──────────────────┘ ┌─────────┴─────────┐ │                   │ ▼                   ▼
-┌────────────────────────────┐   ┌──────────────────────────────┐ │ DETERMINISTIC OUTPUT PATH  │   │  OPTIONAL LLM RENDERING LAYER │ │  (NO LLM REQUIRED)         │   │  (PLR – Probabilistic Only)   │ │                            │   │                              │ │ - Symbolic templates       │   │ - Prompt constrained by CCV  │ │ - Rule-based language      │   │ - No state authority          │ │ - Guaranteed consistency  │   │ - No memory or agency         │ └───────────────┬────────────┘   └───────────────┬──────────────┘ │                                │ ▼                                ▼ ┌──────────────────────────────────────────────┐ │            OUTPUT VALIDATION LAYER            │ │  - State consistency check                   │ │  - Constraint compliance                    │ │  - Hallucination rejection                  │ └───────────────────────────┬──────────────────┘ │ ┌─────────┴─────────┐ ▼                   ▼ ┌──────────────┐     ┌──────────────┐ │ ACCEPTED     │     │ DISCARDED     │ │ OUTPUT       │     │ OUTPUT        │ └──────────────┘     └──────────────┘
-### Design Notes
-- Ghost is not an autonomous agent.
-- Ghost does not select actions or goals.
-- All behavior emerges from persistent symbolic state.
-- Language models are optional and strictly subordinated.
-- No output can directly mutate internal state.
+# Example Flow — How Ghost Influences Behavior (Non-Agentic)
 
-Example: Internal State Influencing NPC Behavior
-This example shows how Ghost influences NPC behavior without generating dialogue or actions directly.
-Scenario
+This document provides a concrete example of how the Ghost engine processes input, updates internal state, and constrains downstream behavior **without generating dialogue, actions, or plans**.
+
+Ghost does not act.  
+Ghost does not decide outcomes.  
+Ghost restricts what outcomes are allowed.
+
+---
+
+## Scenario
+
 A player approaches an NPC shortly after stealing from a nearby shop.
+
 The game engine reports this event to Ghost as contextual input.
-Internal State Update
-Ghost updates internal symbolic variables such as:
-trust: decreases
-suspicion: increases
-tolerance: decreases
-memory persistence: reinforced
-These updates follow explicit rules (decay, reinforcement, clamping), not learned weights.
-No dialogue is generated at this stage.
-Constraint Output
-From the updated state, Ghost produces advisory constraints such as:
-reduce friendliness range
-restrict cooperative responses
-suppress information sharing
-bias toward evasive or dismissive phrasing
-These constraints describe what should not be allowed, not what must happen.
-Dialogue / Action Selection
-An external system (dialogue tree, template system, or LLM) selects from its existing options within those constraints.
-For example, a valid result might be:
-“We’re closed. Take your business elsewhere.”
-This line was not chosen because the NPC “felt” anything.
-It was chosen because other options were no longer permitted.
-Key Point
-Ghost did not write the dialogue.
-Ghost made certain dialogue impossible.
-This preserves:
-mechanical consistency
-believable behavior
-debuggable causality
-without requiring agentic language generation.
+
+Ghost receives **signals**, not intent:
+- proximity event
+- recent theft flag
+- NPC–player interaction request
+
+---
+
+## Step 1 — Input Normalization
+
+Ghost routes and interprets input through deterministic parsing and pattern detection logic:
+
+- event_type = `player_interaction`
+- context_flag = `recent_theft`
+- target = `npc_merchant`
+
+No interpretation, dialogue, or emotion occurs at this stage.
+
+---
+
+## Step 2 — Memory Recall
+
+Ghost queries persistent symbolic memory:
+
+- Prior encounters with the player
+- Existing trust or suspicion levels
+- Recent contradiction or tension history
+
+Memory recall may strengthen or decay prior signals based on time and reinforcement rules.
+
+Memory recall is implemented via distributed symbolic memory modules rather than a single retrieval stage.
+
+---
+
+## Step 3 — Internal State Update (Deterministic)
+
+Ghost updates internal symbolic state using deterministic rules:
+
+- trust → decreases
+- suspicion → increases
+- tolerance → decreases
+- belief tension → increases
+- stability → checked and clamped if needed
+
+All updates are:
+- rule-based
+- bounded
+- observable
+- repeatable
+
+No language is generated.
+
+---
+
+## Step 4 — Meta-Regulatory Enforcement
+
+Meta-regulatory controls evaluate system health:
+
+- Prevent runaway escalation
+- Prevent collapse into passivity
+- Enforce stability thresholds
+
+If instability or stagnation is detected, corrective pressure is applied **before any output is allowed**.
+
+---
+
+## Step 5 — Strategy Routing
+
+Based on internal state, Ghost selects an selects a response strategy via deterministic weighting and pressure overrides:
+
+Examples:
+- `dismissive`
+- `guarded`
+- `restricted`
+- `neutral`
+
+This is **not** dialogue selection.  
+It is a **routing decision** that limits downstream options.
+
+---
+
+## Step 6 — Constraint Snapshot Generation
+
+Ghost produces an authoritative state snapshot derived from current internal variables, including:
+
+- allowed response modes
+- suppressed behaviors
+- bias weights
+- output gating flags
+
+This snapshot is authoritative for the remainder of the interaction.
+
+---
+
+## Step 7 — Downstream Selection (External System)
+
+An external system (dialogue tree, template engine, or optional LLM):
+
+- selects dialogue or actions **within Ghost’s constraints**
+- cannot access or modify Ghost’s internal state
+- cannot override forbidden modes
+
+Example result:
+
+> “We’re closed. Take your business elsewhere.”
+
+This line was not *chosen* by Ghost.  
+Other lines were made **invalid**.
+
+---
+
+## Key Outcome
+
+Ghost did **not**:
+- write dialogue
+- choose actions
+- simulate emotions
+- pursue goals
+
+Ghost **did**:
+- enforce internal consistency
+- restrict invalid behavior
+- preserve causal continuity
+
+---
+
+## Why This Matters
+
+This approach enables:
+
+- believable consistency without scripted emotions
+- debuggable causality instead of opaque generation
+- stateful behavior without agentic autonomy
+- NPCs that react coherently without “thinking”
+
+Ghost turns **state into constraint**, not language into cognition.
+
+---
+
+## Summary
+
+Ghost operates as a **deterministic internal-state authority** that constrains downstream systems.
+
+Language and action selection remain external.
+
+Behavior emerges from **what is no longer allowed**, not from simulated intent.
