@@ -1,5 +1,29 @@
 # ghost-engine
 Internal state reasoning engine (proof-of-architecture)
+
+## Minimal Working Proof
+
+This repository contains a runnable, deterministic Python state engine with no machine learning dependencies.
+
+If you want to skip conceptual framing and inspect concrete behavior first, start here:
+
+- **State representation and persistence**  
+  `ghost/state/`
+
+- **Deterministic routing and strategy selection**  
+  `ghost/routing/`
+
+- **Meta-regulation, stability controls, and internal monitoring**  
+  `ghost/runtime/`  
+  `ghost/probes/`
+
+- **Externalized memory and recall mechanics**  
+  `ghost/memory/`
+
+These modules collectively demonstrate that Ghost maintains internal state coherence, enforces deterministic routing rules, and survives invalid or unknown commands **before** any language model interaction occurs.
+
+The language model (when enabled) is treated strictly as a black-box language surface. All state evolution, constraint enforcement, and routing decisions occur independently of probabilistic text generation.
+
 ## Thesis
 
 Ghost is an internal state reasoning engine designed to generate consistent, structured advisory outputs without hallucination or false agency.
