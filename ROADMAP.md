@@ -53,7 +53,7 @@ Ghost currently demonstrates:
 - Meta-regulatory stability controls
 - Constraint-first output shaping
 - Optional, non-authoritative LLM language surface
-- Hallucination resistance via state grounding and enforcement
+- Certain classes of hallucination can be reduced architecturally through state grounding and constraint enforcement, rather than through sampling or scale alone
 
 This phase establishes architectural viability, not completeness.
 
