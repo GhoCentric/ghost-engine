@@ -40,6 +40,7 @@ If a variable is not defined in state, it is considered nonexistent and cannot i
 ---
 
 ## 3. Categories of State Variables
+Exact variable names and availability depend on the current implementation.
 
 The state model is organized into broad categories rather than fixed schemas. Exact variable names and counts are implementation-dependent.
 
