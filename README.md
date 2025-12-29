@@ -84,7 +84,7 @@ The system is optimized for consistency, reliability, and coherence rather than 
 
 ## Hallucination Resistance
 
-## What “Hallucination” Means in This Project
+–What “Hallucination” Means in This Project
 
 When this project refers to hallucination, it does **not** mean semantic correctness or factual accuracy guarantees from a language model.
 
