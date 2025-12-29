@@ -48,7 +48,7 @@ Ghost currently demonstrates:
 
 - A deterministic internal-state kernel
 - Persistent symbolic state across interactions
-- Emotional vectors and belief-tension metrics
+- Scalar emotional state variables and belief-tension metrics
 - Explicit contradiction tracking
 - Meta-regulatory stability controls
 - Constraint-first output shaping
