@@ -69,7 +69,11 @@ Pay attention to:
 
 How to read the output:
 -----------------------
-The CSV logs two rows per tick: a baseline row and a ghost row. Both systems see the same environment and use the same utility logic. The baseline system has no internal state governance, so its behavior remains static under similar conditions. The ghost-assisted system runs an additional internal-state layer that accumulates tension and selects a high-level strategy mode. Over time, this causes the ghost system’s action choices to diverge gradually from baseline, despite identical inputs. The key thing to observe is not that Ghost “chooses actions,” but that it changes when and why certain actions become preferable, with every shift traceable to explicit state variables printed alongside the decision.
+The CSV logs two rows per tick:
+
+a baseline row and a ghost row. Both systems see the same environment and use the same utility logic. 
+The baseline system has no internal state governance, so its behavior remains static under similar conditions. 
+The ghost-assisted system runs an additional internal-state layer that accumulates tension and selects a high-level strategy mode. Over time, this causes the ghost system’s action choices to diverge gradually from baseline, despite identical inputs. The key thing to observe is not that Ghost “chooses actions,” but that it changes when and why certain actions become preferable, with every shift traceable to explicit state variables printed alongside the decision.
 
 Running diff_actions.py identifies 42 divergent ticks where Ghost’s action differs from the baseline.
 
