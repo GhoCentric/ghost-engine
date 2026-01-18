@@ -32,7 +32,7 @@ They are not expected to run in a bare GitHub environment.
 | `test_routing_weights.py` | Configuration | ❌ No |
 | `test_pressure_routing.py` | Configuration | ❌ No |
 | `test_stability_recovery.py` | Engine Integration | ✅ Yes |
-| `proof_suite.py` | Engine Stability Proof | ⚠️ Partial |
+| `proof_suite.py` | Engine Stability Proof | ✅️ Yes |
 
 ---
 
