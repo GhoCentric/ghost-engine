@@ -32,6 +32,7 @@ They are not expected to run in a bare GitHub environment.
 | `test_routing_weights.py` | Configuration | ❌ No |
 | `test_pressure_routing.py` | Configuration | ❌ No |
 | `test_stability_recovery.py` | Engine Integration | ✅ Yes |
+| `proof_suite.py` | Engine Stability Proof | ⚠️ Partial |
 
 ---
 
@@ -178,6 +179,51 @@ This test proves that Ghost behaves like a **resilient system**, not a fragile s
 - Runtime execution required
 - Not intended for skeleton-only repos
 
+### `proof_suite.py`
+This file performs a **formal stability and safety analysis** of Ghost’s internal state transitions under repeated stimulation.
+
+Rather than validating individual functions, it evaluates **system-level behavior** across many iterations, focusing on whether Ghost remains bounded, damped, and non-explosive over time.
+
+The proof suite instruments state transitions and computes quantitative metrics on how much Ghost’s internal state changes between steps.
+
+### Guarantees
+- State transitions are **bounded** under repeated updates  
+- No single transition can cause catastrophic state flips  
+- Transition magnitudes remain small and controlled  
+- Energy decays rather than amplifies  
+- Divergence is detectable and observable  
+
+Measured metrics include:
+- L∞ (max-axis) transition magnitude  
+- L2 (vector norm) transition magnitude  
+- Mean and maximum variance over long runs  
+
+### What It Does NOT Test
+- Language quality or semantic correctness  
+- Command routing correctness  
+- Strategy selection “intelligence”  
+- External LLM behavior  
+- UI or interaction loops  
+
+This test is intentionally **mechanism-agnostic**: it observes outcomes, not implementation details.
+
+### Why This Test Is Important
+Most failures in adaptive systems do not come from logic bugs — they come from **runaway feedback**.
+
+This proof suite demonstrates that Ghost behaves as a **damped dynamical system**, not an unstable recursive loop.
+
+It provides evidence that:
+- Ghost cannot self-amplify into chaos  
+- Stability is enforced structurally, not heuristically  
+- Safety is preserved even when behavior evolves  
+
+This is a **system safety guarantee**, not a unit correctness check.
+
+### Dependency Level
+- Core Ghost logic required  
+- No interactive runtime loop required  
+- Safe to run in isolation  
+- Intended as a **stability proof**, not a regression test
 ---
 
 ## Architectural Notes
