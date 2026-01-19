@@ -250,7 +250,7 @@ def autocorrelation(x, y):
     return cov / (var_x ** 0.5 * var_y ** 0.5)
 
 class AntiFeedbackTest:
-    def __init__(self, steps=10_000):
+    def __init__(self, steps=10_000):  #This can be changed. No effect on runtime
         self.steps = steps
         self.state = GhostState()
         self.history = []
