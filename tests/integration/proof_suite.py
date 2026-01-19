@@ -276,7 +276,7 @@ class AntiFeedbackTest:
             "variance": round(variance, 6),
             "max_variance": round(max_variance, 4),
             "autocorrelation_lag1": round(autocorr, 4),
-            "energy_decay": True,
+            "stability_proxy_decreasing": True,
             "divergence_detected": max_variance > 0.25
         }
 
