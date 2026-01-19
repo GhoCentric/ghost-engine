@@ -91,7 +91,7 @@ def stress_proof():
             "hello there",
             "#state adjust e 0.8",
         ]
-        for _ in range(500):  # Increase to 1000+ for deeper testing
+        for _ in range(1000):  # Increase to 1000+ for deeper testing
             line = random.choice(commands)
             state, _ = route(state, None, line)
         print("[PASS] Ghost survived 500 random cycles without error")
@@ -228,6 +228,27 @@ class GhostState:
 # -----------------------------
 # Stability Test: 7B Anti-Feedback
 # -----------------------------
+def autocorrelation(x, y):
+    """
+    Compute Pearson correlation between two equal-length sequences.
+    Used for lag-1 autocorrelation of state history.
+    """
+    n = len(x)
+    if n == 0:
+        return 0.0
+
+    mean_x = sum(x) / n
+    mean_y = sum(y) / n
+
+    cov = sum((xi - mean_x) * (yi - mean_y) for xi, yi in zip(x, y))
+    var_x = sum((xi - mean_x) ** 2 for xi in x)
+    var_y = sum((yi - mean_y) ** 2 for yi in y)
+
+    if var_x == 0 or var_y == 0:
+        return 0.0
+
+    return cov / (var_x ** 0.5 * var_y ** 0.5)
+
 class AntiFeedbackTest:
     def __init__(self, steps=10_000):
         self.steps = steps
@@ -245,12 +266,16 @@ class AntiFeedbackTest:
         variance = sum((x - mean) ** 2 for x in self.history) / len(self.history)
         max_variance = max(abs(x - mean) for x in self.history)
 
+        # Lag-1 autocorrelation
+        autocorr = autocorrelation(self.history[:-1], self.history[1:])
+
         return {
             "test": "7B_AntiFeedback",
             "steps": self.steps,
             "mean_mood": round(mean, 4),
             "variance": round(variance, 6),
             "max_variance": round(max_variance, 4),
+            "autocorrelation_lag1": round(autocorr, 4),
             "energy_decay": True,
             "divergence_detected": max_variance > 0.25
         }
