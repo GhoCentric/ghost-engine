@@ -1,0 +1,135 @@
+{
+  "engine": "Ghost Cognitive Engine",
+  "binding": "REAL",
+  "timestamp": "2026-01-21T00:53:38.678733",
+  "tests": {
+    "anti_feedback_live": {
+      "test": "7B_AntiFeedback_REAL",
+      "steps": 1000,
+      "mean_mood": 0.4735,
+      "variance": 0.001008,
+      "max_variance": 0.076,
+      "autocorrelation_lag1": 0.9938,
+      "divergence_detected": true
+    },
+    "equilibrium_baseline_test": {
+      "ghost_tests": [
+        {
+          "test": "7B_AntiFeedback",
+          "steps": 1000,
+          "tracked": "mood",
+          "mean": 0,
+          "variance": 0,
+          "max_abs_dev_from_mean": 0,
+          "autocorr_lag1": 0,
+          "divergence_detected": false
+        },
+        {
+          "test": "ImpulseResponse",
+          "baseline_steps": 200,
+          "impulse_step": 200,
+          "settle_steps": 300,
+          "impulse_strength": 0.9,
+          "keys": [
+            "mood",
+            "reaction_strength",
+            "clamp_tolerance",
+            "clamp_sensitivity",
+            "memory_factor",
+            "mirror_coeff"
+          ],
+          "max_dev_l2": 1.096586,
+          "final_dev_l2": 1.096586,
+          "bounded": true,
+          "recovered": false,
+          "passed": false
+        }
+      ]
+    },
+    "live_stability_test": {
+      "test": "live_stability_test",
+      "unit_proof_ran": true,
+      "integration_proof_ran": true,
+      "stress_proof_ran": true,
+      "persistence_proof_ran": true,
+      "cognitive_proof_ran": true,
+      "transition_stats": {
+        "samples": 1,
+        "max_linf": 0,
+        "max_l2": 0
+      }
+    },
+    "proof_suite_bound": {
+      "test": "proof_suite_bound",
+      "binding_mode": "REAL",
+      "state_keys": [
+        "clamp_sensitivity",
+        "clamp_tolerance",
+        "memory_factor",
+        "mirror_coeff",
+        "mood",
+        "reaction_strength"
+      ],
+      "results": [
+        {
+          "test": "7B_AntiFeedback",
+          "steps": 10000,
+          "mean_mood": 0.5,
+          "variance": 0,
+          "max_variance": 0,
+          "autocorrelation_lag1": 0,
+          "divergence_detected": false
+        },
+        {
+          "test": "BoundsInvariant",
+          "steps": 5000,
+          "violations": 0,
+          "max_overshoot": 0
+        },
+        {
+          "test": "ImpulseResponse",
+          "baseline_steps": 2000,
+          "impulse": 1,
+          "settle_steps": 300,
+          "max_deviation_l2": 0,
+          "final_deviation_l2": 0
+        },
+        {
+          "test": "Hysteresis",
+          "magnitude": 1,
+          "hold_steps": 200,
+          "forward_end_mood": 0.5,
+          "backward_end_mood": 0.5,
+          "memory_effect": false
+        },
+        {
+          "test": "Determinism",
+          "steps": 2000,
+          "stimulus_seed": 2024,
+          "same_trace": true,
+          "max_abs_diff": 0
+        },
+        {
+          "test": "ClosedFormLyapunovClaim",
+          "passed": false,
+          "reason": "A closed-form Lyapunov proof is a math derivation about the update equations. A simulation test cannot prove it."
+        },
+        {
+          "test": "SymbolicConvergenceClaim",
+          "passed": false,
+          "reason": "Symbolic convergence proof requires symbolic analysis of the transition function, not black-box runs."
+        },
+        {
+          "test": "CombinatorialStateSpaceExhaustionClaim",
+          "passed": false,
+          "reason": "Exhaustion means enumerating a discrete state space. Your system is continuous; discretization can only approximate coverage."
+        },
+        {
+          "test": "GlobalOptimalityClaim",
+          "passed": false,
+          "reason": "Global optimality is about an objective function and guarantees. Ghost isn't an optimizer in this proof suite."
+        }
+      ]
+    }
+  }
+}
