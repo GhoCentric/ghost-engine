@@ -8,12 +8,30 @@ version = "0.1.1"
 description = "Ghost cognitive engine"
 readme = "README.md"
 requires-python = ">=3.9"
+
 authors = [
-  { name="Shane Heckathorn" }
+  { name = "Shane Heckathorn" }
 ]
 
 dependencies = []
 
+# OPTIONAL but recommended metadata
+license = { text = "MIT" }
+keywords = ["ai", "engine", "cognition", "simulation"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[tool.setuptools]
+package-dir = { "" = "." }
+
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ghost*"]
+include = ["ghost", "ghost.*"]
+
+# OPTIONAL: CLI entry point (only if npc_demo.py is inside ghost/)
+[project.scripts]
+ghost-demo = "ghost.npc_demo:main"
