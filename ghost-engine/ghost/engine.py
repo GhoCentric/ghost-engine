@@ -1,73 +1,106 @@
-"""
-ghocentric-ghost-engine
-Public API surface.
-"""
+from dataclasses import asdict
+from ghost.step import GhostStep
 
-__version__ = "0.1.2"
 
-from .engine import GhostEngine
-
-__all__ = [
-    "GhostEngine",
-    "init",
-    "step",
-    "reset",
-    "state",
-    "snapshot",
-]
-
-# Module-scoped active engine (explicit lifecycle)
-_ACTIVE_ENGINE: GhostEngine | None = None
-
-def snapshot():
+class GhostEngine:
     """
-    Return an immutable snapshot of the active engine state.
+    Core Ghost engine.
+
+    - Public API: dict-based, serialization-safe
+    - Internal logic may use typed objects (GhostStep)
+    - All state mutation occurs via step()
     """
-    if _ACTIVE_ENGINE is None:
-        raise RuntimeError(
-            "Ghost engine not initialized. Call ghost.init() first."
-        )
 
-    return _ACTIVE_ENGINE.snapshot()
+    def __init__(self, context: dict | None = None):
+        if context is None:
+            context = {}
 
+        self._ctx = context
 
-def init(context: dict | None = None) -> GhostEngine:
-    """
-    Initialize and register the active Ghost engine.
-    """
-    global _ACTIVE_ENGINE
-    _ACTIVE_ENGINE = GhostEngine(context=context)
-    return _ACTIVE_ENGINE
+        # Baseline state
+        self._ctx.setdefault("cycles", 0)
+        self._ctx.setdefault("input", None)
+        self._ctx.setdefault("last_step", None)
 
+    def step(self, step_data=None):
+        """
+        Advance the Ghost engine by one cycle.
 
-def reset():
-    """
-    Reset the active Ghost engine.
-    Safe to call multiple times.
-    """
-    global _ACTIVE_ENGINE
-    _ACTIVE_ENGINE = None
+        Accepts:
+        - dict (public / legacy input)
+        - GhostStep (internal / typed input)
 
+        Internal types MUST NOT leak into public state.
+        """
 
-def step(step_data=None):
-    """
-    Advance the active Ghost engine by one cycle.
-    """
-    if _ACTIVE_ENGINE is None:
-        raise RuntimeError(
-            "Ghost engine not initialized. Call ghost.init() first."
-        )
+        ctx = self._ctx
+        ctx["cycles"] += 1
 
-    return _ACTIVE_ENGINE.step(step_data)
+        # Ensure npc bucket exists
+        npc = ctx.setdefault("npc", {})
+        npc.setdefault("threat_level", 0.0)
+        npc.setdefault("last_intent", None)
+        npc.setdefault("actors", {})
 
+        received_threat = False
+        step: GhostStep | None = None
+        public_input: dict | None = None
 
-def state():
-    """
-    Return the active engine's live state.
-    """
-    if _ACTIVE_ENGINE is None:
-        raise RuntimeError(
-            "Ghost engine not initialized. Call ghost.init() first."
-        )
+        # ---- Normalize input at boundary ----
+        if step_data is not None:
+            if isinstance(step_data, dict):
+                step = GhostStep(**step_data)
+                public_input = dict(step_data)
 
-    return _ACTIVE_ENGINE.state()
+            elif isinstance(step_data, GhostStep):
+                step = step_data
+                public_input = asdict(step)
+
+            else:
+                raise TypeError("step_data must be dict or GhostStep")
+
+            # Public-facing state (DICT ONLY)
+            ctx["input"] = public_input
+            ctx["last_step"] = public_input
+
+        # ---- Internal logic (GhostStep ONLY) ----
+        if step is not None:
+            if step.source == "npc_engine" and step.intent == "threat":
+                received_threat = True
+
+                actor = step.actor
+                intensity = float(step.intensity)
+
+                actor_bucket = npc["actors"].setdefault(
+                    actor,
+                    {"threat_count": 0}
+                )
+                actor_bucket["threat_count"] += 1
+
+                mood = ctx.get("state", {}).get("mood", 0.5)
+                mood_multiplier = 0.5 + mood  # 0.5 → 1.5
+
+                npc["threat_level"] += intensity * mood_multiplier
+                npc["last_intent"] = "threat"
+
+        # ---- Decay if no threat received ----
+        if not received_threat:
+            npc["threat_level"] = max(
+                0.0,
+                npc["threat_level"] - 0.15
+            )
+
+        return ctx
+
+    def state(self):
+        """
+        Return the live engine state (mutable).
+
+        Intended for internal or controlled external use.
+        """
+        return self._ctx
+
+    def snapshot(self):
+        """Return an immutable snapshot of engine state."""
+        import copy
+        return copy.deepcopy(self._ctx)
