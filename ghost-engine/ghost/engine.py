@@ -1,79 +1,73 @@
+"""
+ghocentric-ghost-engine
+Public API surface.
+"""
+
 __version__ = "0.1.2"
 
-class GhostEngine:
-    def __init__(self, context: dict | None = None):
-        """
-        Core Ghost engine.
-        Monolithic, self-contained v0.1 implementation.
-        """
+from .engine import GhostEngine
 
-        # Initialize context if not provided
-        if context is None:
-            context = {}
+__all__ = [
+    "GhostEngine",
+    "init",
+    "step",
+    "reset",
+    "state",
+    "snapshot",
+]
 
-        self._ctx = context
+# Module-scoped active engine (explicit lifecycle)
+_ACTIVE_ENGINE: GhostEngine | None = None
 
-        # Required baseline state
-        self._ctx.setdefault("cycles", 0)
-        self._ctx.setdefault("input", None)
-        self._ctx.setdefault("last_step", None)
+def snapshot():
+    """
+    Return an immutable snapshot of the active engine state.
+    """
+    if _ACTIVE_ENGINE is None:
+        raise RuntimeError(
+            "Ghost engine not initialized. Call ghost.init() first."
+        )
 
-    def step(self, input_data=None):
-        """
-        Advance the Ghost engine by one cycle.
-        """
+    return _ACTIVE_ENGINE.snapshot()
 
-        ctx = self._ctx
-        ctx["cycles"] += 1
 
-        # Ensure npc bucket exists
-        npc = ctx.setdefault("npc", {})
-        npc.setdefault("threat_level", 0.0)
-        npc.setdefault("last_intent", None)
-        npc.setdefault("actors", {})
+def init(context: dict | None = None) -> GhostEngine:
+    """
+    Initialize and register the active Ghost engine.
+    """
+    global _ACTIVE_ENGINE
+    _ACTIVE_ENGINE = GhostEngine(context=context)
+    return _ACTIVE_ENGINE
 
-        # --- PROCESS INPUT FIRST ---
-        received_threat = False
 
-        if input_data:
-            ctx["raw_input"] = input_data
-            ctx["input"] = input_data
+def reset():
+    """
+    Reset the active Ghost engine.
+    Safe to call multiple times.
+    """
+    global _ACTIVE_ENGINE
+    _ACTIVE_ENGINE = None
 
-            if input_data.get("source") == "npc_engine":
-                intent = input_data.get("intent")
-                intensity = float(input_data.get("intensity", 0.0))
-                actor = input_data.get("actor", "unknown")
 
-                if intent == "threat":
-                    received_threat = True
+def step(step_data=None):
+    """
+    Advance the active Ghost engine by one cycle.
+    """
+    if _ACTIVE_ENGINE is None:
+        raise RuntimeError(
+            "Ghost engine not initialized. Call ghost.init() first."
+        )
 
-                    # Actor memory
-                    actor_bucket = npc["actors"].setdefault(
-                        actor,
-                        {"threat_count": 0}
-                    )
-                    actor_bucket["threat_count"] += 1
+    return _ACTIVE_ENGINE.step(step_data)
 
-                    # Mood modulation
-                    mood = ctx.get("state", {}).get("mood", 0.5)
-                    mood_multiplier = 0.5 + mood  # 0.5 → 1.5
 
-                    threat_gain = intensity * mood_multiplier
-                    npc["threat_level"] += threat_gain
-                    npc["last_intent"] = "threat"
+def state():
+    """
+    Return the active engine's live state.
+    """
+    if _ACTIVE_ENGINE is None:
+        raise RuntimeError(
+            "Ghost engine not initialized. Call ghost.init() first."
+        )
 
-        # --- DECAY ONLY IF NO NEW THREAT ---
-        if not received_threat:
-            DECAY_RATE = 0.15
-            npc["threat_level"] = max(0.0, npc["threat_level"] - DECAY_RATE)
-
-        return ctx
-    
-    def state(self):
-        """Return the live engine state (mutable)."""
-        return self._ctx
-
-    def snapshot(self):
-        """Return an immutable snapshot of engine state."""
-        import copy
-        return copy.deepcopy(self._ctx)
+    return _ACTIVE_ENGINE.state()
