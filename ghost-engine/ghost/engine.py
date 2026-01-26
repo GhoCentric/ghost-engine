@@ -1,3 +1,5 @@
+__version__ = "0.1.2"
+
 class GhostEngine:
     def __init__(self, context: dict | None = None):
         """
