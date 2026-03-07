@@ -1,23 +1,16 @@
-# ghocentric-ghost-engine
+ghocentric-ghost-engine
 
-A lightweight, deterministic internal state engine for experimenting with
-persistent state, temporal dynamics, and emergent behavior in interactive systems.
+A lightweight, deterministic internal state engine for experimenting with persistent state, temporal dynamics, and emergent behavior in interactive systems.
 
-Ghost is NOT a language model and NOT a decision-maker.
-It is a minimal, stateful core designed to accumulate interaction signals over time
-and expose them in a clean, predictable, and serialization-safe way.
+Ghost is NOT a language model and NOT a decision-maker. It is a minimal, stateful core designed to accumulate interaction signals over time and expose them in a clean, predictable, and serialization-safe way.
 
-This project is intentionally focused on architecture and correctness first.
-Surface features, integrations, and higher-level reasoning systems are expected
-to be layered on top of the core in later versions.
+This project is intentionally focused on architecture and correctness first. Surface features, integrations, and higher-level reasoning systems are expected to be layered on top of the core in later versions.
 
----
 
 INSTALLATION
 
 pip install ghocentric-ghost-engine
 
----
 
 BASIC USAGE
 
@@ -29,141 +22,139 @@ engine.step({
     "source": "npc_engine",
     "intent": "threat",
     "actor": "player",
+    "target": "guard",
     "intensity": 0.5,
 })
 
 state = engine.state()
 print(state["npc"]["threat_level"])
 
-Ghost mutates state only via explicit step() calls.
+Ghost mutates state only via explicit step() calls.  
 All public-facing state is exposed as dictionaries and is safe to serialize.
 
----
 
 CORE DESIGN PRINCIPLES
 
-- Deterministic, persistent state core
-- Explicit state transitions via step()
-- No hidden execution or side effects
-- Public API remains dict-based and serialization-safe
-- Internal typed representations may exist but never leak
-- Designed to be expanded around a stable core, not bloated prematurely
+• Deterministic, persistent state core  
+• Explicit state transitions via step()  
+• No hidden execution or side effects  
+• Public API remains dict-based and serialization-safe  
+• Internal typed representations may exist but never leak  
+• Designed to be expanded around a stable core, not bloated prematurely  
+
 
 Ghost does NOT:
-- Choose actions
-- Generate dialogue
-- Interpret semantics
-- Store memory implicitly
+
+• Choose actions  
+• Generate dialogue  
+• Interpret semantics  
+• Store memory implicitly  
 
 Those behaviors belong to external systems that consume Ghost’s state.
 
----
 
-STABILITY & GUARANTEES (v0.1.2)
+STABILITY & GUARANTEES (v0.2.0)
 
-Ghost Engine v0.1.2 establishes a formally verified core protected by
-property-based testing using Hypothesis.
+Ghost Engine v0.2.0 establishes the first fully functional deterministic interaction core.
 
-Verified invariants include:
-- Threat level is never negative
-- Threat accumulation is monotonic with respect to input intensity
-- Threat decays monotonically in the absence of new input
-- Actor-specific threat memory remains consistent
-- Internal step types never leak into public engine state
-- Engine state mutates only through explicit step() calls
+The engine now guarantees:
 
-These guarantees hold under randomized and adversarial input.
+• Deterministic runtime behavior (same inputs → same outputs)  
+• Explicit, bounded state mutation per step  
+• Actor state updates across interactions  
+• Pairwise relationship mutation with symmetric consistency  
+• Bounded cascade propagation across interaction networks  
+• Global tension tracking across the system  
+• Full JSON-safe serialization of engine state  
 
-ARCHITECTURAL EXPANSION (v0.1.3)
+These guarantees hold under repeated execution and adversarial input.
 
-Version 0.1.3 introduces the first structural components required for modeling
-multi-agent interaction systems on top of Ghost's deterministic state core.
 
-This release does not change the fundamental guarantees of the engine.
-Instead, it expands the internal architecture to support scalable interaction graphs.
+ARCHITECTURAL EXPANSION (v0.2.0)
 
-New components include:
+Version 0.2.0 introduces the first fully operational multi-agent interaction model on top of Ghost’s deterministic state core.
 
-AgentRegistry
-A centralized registry responsible for managing and resolving agents participating in the simulation.  
-This allows Ghost to maintain consistent references to actors across interactions without introducing hidden state.
+New capabilities include:
 
-Neighbor Index
-Relationships between agents are now indexed through a neighbor structure rather than requiring full scans of the relationship table.
+Agent State Mutation  
+Agents now maintain evolving internal state (mood, tension, last intent) and react deterministically to interaction signals.
 
-Example conceptually:
+Relationship Graph  
+Pairwise relationships now evolve through explicit interaction deltas, supporting long-term system memory without hidden state.
 
-("Alice","Bob") → relationship
+Bounded Cascade Propagation  
+Signals propagate deterministically through an agent’s local interaction network with strict bounds to prevent runaway behavior.
 
-Previously required scanning the entire relationship set to answer:
+Global System Tension  
+The engine now tracks a shared global tension signal representing aggregate interaction pressure across the system.
 
-Who interacts with Alice?
-
-With the neighbor index:
-
-neighbors["Alice"] → {"Bob", "Charlie", "Dave"}
-
-This allows constant-time queries of an agent's interaction network.
 
 Why This Matters
 
 These changes allow Ghost-based systems to scale toward:
 
-- 100k+ agents
-- millions of relationships
-- fast simulation steps
+• large multi-agent simulations  
+• social interaction modeling  
+• emergent behavioral systems  
+• game-world simulation engines  
 
-while preserving the deterministic, explicit-state philosophy of the engine.
+while preserving the deterministic, explicit-state philosophy of the core.
 
-The interaction architecture introduced in v0.1.3 lays the groundwork for future systems such as:
-
-- social modeling
-- alliances and betrayal
-- trade networks
-- large-scale emergent agent worlds
-
----
 
 TESTING PHILOSOPHY
 
-Ghost uses property-based testing to validate behavioral invariants rather than
-relying solely on example-driven tests.
+Ghost uses property-based testing and invariant validation rather than relying solely on example-driven tests.
 
-This ensures the engine remains correct and predictable as new systems and features
-are layered on top in future versions.
+Core validation includes:
 
----
+• determinism verification  
+• clamping and bounded-state guarantees  
+• serialization safety validation  
+
+This ensures the engine remains correct and predictable as new systems and features are layered on top in future versions.
+
 
 PROJECT STRUCTURE
 
-ghost/           core engine modules
-tests/           invariant and property-based tests
-npc_demo.py      experimental sandbox for new ideas
-pyproject.toml   build and packaging configuration
+ghost/        core engine modules  
+tests/        invariant and runtime tests  
+npc_demo.py   experimental sandbox for new ideas  
+pyproject.toml build and packaging configuration  
 
-Demos are intentionally minimal and act as experimental sandboxes.
+Demos are intentionally minimal and act as experimental sandboxes.  
 They are not representative of Ghost’s final scope.
 
----
 
 STATUS
 
-Ghost Engine is in early development.
-The core architecture is stable as of v0.1.2, but APIs may evolve as new layers are added.
+Ghost Engine remains in early development.
 
-This project is intended as a foundation for experimentation, research, and
-future system design rather than a finished product.
+As of v0.2.0:
+
+• The deterministic interaction core is stable  
+• APIs may still evolve  
+• Higher-level systems remain intentionally external  
+
+This project is intended as a foundation for experimentation, research, and future system design rather than a finished product.
+
 
 RELEASE HISTORY
 
-v0.1.3
-AgentRegistry and neighbor indexing for scalable multi-agent interaction graphs.
+v0.2.0  
+• Introduced real agent state mutation  
+• Added relationship mutation logic  
+• Implemented bounded cascade propagation  
+• Achieved deterministic runtime guarantees  
+• Achieved JSON-safe serialization baseline  
 
-v0.1.2
-Formal invariant verification using property-based testing.
+v0.1.3  
+• AgentRegistry and neighbor indexing for scalable interaction graphs  
 
-v0.1.1
-Core threat accumulation improvements.
+v0.1.2  
+• Formal invariant verification using property-based testing  
 
-v0.1.0
-Initial public architecture release.
+v0.1.1  
+• Core threat accumulation improvements  
+
+v0.1.0  
+• Initial public architecture release
