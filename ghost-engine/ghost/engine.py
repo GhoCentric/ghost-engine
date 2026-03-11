@@ -3,6 +3,21 @@ from ghost.step import GhostStep
 from ghost.agents import AgentRegistry
 from ghost.relationships import RelationshipGraph
 
+def _json_safe(x):
+
+    if isinstance(x, dict):
+        return {str(k): _json_safe(v) for k, v in x.items()}
+
+    if isinstance(x, list):
+        return [_json_safe(v) for v in x]
+
+    if isinstance(x, tuple):
+        return [_json_safe(v) for v in x]
+
+    if isinstance(x, set):
+        return sorted(_json_safe(v) for v in x)
+
+    return x
 
 def clamp(value: float, low: float, high: float) -> float:
     return max(low, min(high, value))
@@ -51,9 +66,15 @@ class GhostEngine:
         ctx["cycles"] += 1
 
         npc = ctx["npc"]
+        
+        # passive decay (only if no threat this step)
+        if step_data is None:
+            npc["threat_level"] = clamp(npc["threat_level"] - 0.02, 0.0, 999999.0)
 
         step: GhostStep | None = None
         public_input: dict | None = None
+        
+        
 
         # ---- Normalize input at boundary ----
         if step_data is not None:
@@ -125,6 +146,12 @@ class GhostEngine:
 
         elif step.intent == "threat":
             actor_state["mood"] = clamp(actor_state["mood"] - (0.05 * intensity), 0.0, 1.0)
+            
+            # actor memory invariant (public-facing)
+            actors_mem = npc.setdefault("actors", {})
+            entry = actors_mem.setdefault(step.actor, {})
+            entry["threat_count"] = entry.get("threat_count", 0) + 1
+            
             actor_state["tension"] = clamp(actor_state["tension"] + (0.06 * intensity), 0.0, 1.0)
 
             if target_state is not None:
@@ -149,7 +176,12 @@ class GhostEngine:
                     neighbor_state["mood"] = clamp(neighbor_state["mood"] - (0.03 * spread), 0.0, 1.0)
                     neighbor_state["tension"] = clamp(neighbor_state["tension"] + (0.08 * spread), 0.0, 1.0)
 
-            npc["threat_level"] = clamp(npc["threat_level"] + (0.50 * intensity), 0.0, 999999.0)
+            # emotional modulation (public invariant)
+            mood = ctx.get("state", {}).get("mood", 0.5)
+
+            gain = 0.50 * intensity * (0.5 + mood)
+
+            npc["threat_level"] = clamp(npc["threat_level"] + gain, 0.0, 999999.0)
 
         else:
             # Unknown or neutral intent -> mild decay only
@@ -168,4 +200,4 @@ class GhostEngine:
     def snapshot(self):
         """Return an immutable snapshot of engine state."""
         import copy
-        return copy.deepcopy(self._ctx)
+        return _json_safe(copy.deepcopy(self._ctx))
