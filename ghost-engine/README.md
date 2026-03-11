@@ -53,21 +53,23 @@ Ghost does NOT:
 Those behaviors belong to external systems that consume Ghost’s state.
 
 
-STABILITY & GUARANTEES (v0.2.0)
+STABILITY & GUARANTEES (v0.2.1)
 
-Ghost Engine v0.2.0 establishes the first fully functional deterministic interaction core.
+Ghost Engine v0.2.1 strengthens the deterministic interaction core with expanded runtime guarantees and formalized behavioral invariants.
 
 The engine now guarantees:
 
-• Deterministic runtime behavior (same inputs → same outputs)  
-• Explicit, bounded state mutation per step  
-• Actor state updates across interactions  
-• Pairwise relationship mutation with symmetric consistency  
-• Bounded cascade propagation across interaction networks  
-• Global tension tracking across the system  
-• Full JSON-safe serialization of engine state  
+• Deterministic runtime behavior (same inputs → same outputs)
+• Explicit, bounded state mutation per step
+• Actor state updates across interactions
+• Actor-level threat accumulation tracking
+• Pairwise relationship mutation with symmetric consistency
+• Bounded cascade propagation across interaction networks
+• Deterministic nonlinear modulation of global system tension
+• Passive decay behavior during idle cycles
+• Fully JSON-safe immutable snapshots of engine state
 
-These guarantees hold under repeated execution and adversarial input.
+These guarantees hold under repeated execution, long-run simulation, and adversarial input streams.
 
 
 ARCHITECTURAL EXPANSION (v0.2.0)
@@ -88,7 +90,6 @@ Signals propagate deterministically through an agent’s local interaction netwo
 Global System Tension  
 The engine now tracks a shared global tension signal representing aggregate interaction pressure across the system.
 
-
 Why This Matters
 
 These changes allow Ghost-based systems to scale toward:
@@ -100,6 +101,34 @@ These changes allow Ghost-based systems to scale toward:
 
 while preserving the deterministic, explicit-state philosophy of the core.
 
+ARCHITECTURAL EXPANSION (v0.2.1)
+
+Version 0.2.1 refines Ghost’s runtime behavior through deterministic nonlinear dynamics and stronger system observability guarantees.
+
+New capabilities include:
+
+Actor Threat Memory
+Agents now maintain explicit per-actor threat accumulation history, enabling long-term behavioral analysis and structured system introspection.
+
+Nonlinear System Modulation
+Global system tension now evolves through deterministic nonlinear modulation, allowing more realistic emergent dynamics while preserving strict predictability.
+
+Idle-State Decay Dynamics
+The engine now exhibits bounded passive decay when idle, improving long-run stability and preventing runaway system pressure.
+
+Immutable JSON-Safe Snapshots
+Engine snapshots are now fully serialization-safe, supporting external persistence, logging, and distributed simulation workflows without risk of mutation or type leakage.
+
+Why This Matters
+
+These refinements improve Ghost’s suitability for:
+
+• long-running simulations  
+• analytical modeling pipelines  
+• reproducible experimental systems  
+• persistent world simulation engines  
+
+while maintaining the strict deterministic philosophy of the core.
 
 TESTING PHILOSOPHY
 
@@ -139,6 +168,13 @@ This project is intended as a foundation for experimentation, research, and futu
 
 
 RELEASE HISTORY
+
+v0.2.1
+• Added actor-level threat accumulation tracking
+• Introduced deterministic nonlinear modulation of global tension
+• Implemented passive idle-cycle decay behavior
+• Added fully JSON-safe immutable snapshot support
+• Expanded regression, invariant, and integration test coverage
 
 v0.2.0  
 • Introduced real agent state mutation  
