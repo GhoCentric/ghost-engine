@@ -1,13 +1,13 @@
 ## Reproduce in <60 Seconds
 
-# install runtime
+install runtime
 pip install ghocentric-ghost-engine
 
-# clone repo for tests
+clone repo for tests
 git clone https://github.com/GhoCentric/ghost-prototype.git
 cd ghost-prototype/ghost-engine
 
-# run invariant tests (current engine, fully reproducible)
+run invariant tests (current engine, fully reproducible)
 python -m docs.tests.test_ghost_invariants
 
 Expected:
