@@ -4,7 +4,7 @@ class RelationshipGraph:
 
     Relationships are stored as:
 
-    ("A","B") → { trust, attachment }
+    ("A","B") -> { trust, attachment }
     """
 
     def __init__(self, ctx: dict):
@@ -13,10 +13,11 @@ class RelationshipGraph:
         self._neighbors = ctx.setdefault("neighbors", {})
 
     def _key(self, a: str, b: str):
-        return tuple(sorted((a, b)))
+        # JSON-safe key
+        a, b = sorted((a, b))
+        return f"{a}|{b}"
 
     def ensure_pair(self, a: str, b: str):
-
         key = self._key(a, b)
 
         rel = self._rels.setdefault(
@@ -27,9 +28,15 @@ class RelationshipGraph:
             },
         )
 
-        # Maintain neighbor index
-        self._neighbors.setdefault(a, set()).add(b)
-        self._neighbors.setdefault(b, set()).add(a)
+        # Maintain neighbor index as LISTS, not sets
+        self._neighbors.setdefault(a, [])
+        self._neighbors.setdefault(b, [])
+
+        if b not in self._neighbors[a]:
+            self._neighbors[a].append(b)
+
+        if a not in self._neighbors[b]:
+            self._neighbors[b].append(a)
 
         return rel
 
@@ -50,6 +57,6 @@ class RelationshipGraph:
 
     def all(self):
         return self._rels
-        
+
     def neighbors(self, agent_id: str):
-        return self._neighbors.get(agent_id, set())
+        return self._neighbors.get(agent_id, [])
