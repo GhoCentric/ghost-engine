@@ -41,6 +41,174 @@ All public-facing state is exposed as dictionaries and is safe to serialize.
 
 ---
 
+---
+
+##Emotional Inertia System (v1.0.0)
+
+Ghost now includes a deterministic emotional inertia system for modeling NPC relationships over time.
+
+Unlike simple accumulation or smoothing systems, relationships in Ghost:
+
+- remember past interactions
+- resist sudden changes
+- decay over time
+- respond differently depending on history
+
+This enables more realistic behavior under oscillating inputs such as:
+
+insult → help → insult → help
+
+Where traditional systems reset or average out, Ghost preserves emotional direction.
+
+---
+
+##Dual-Channel Relationship Model
+
+Relationships are no longer a single value.
+
+Each relationship now tracks:
+
+positive reservoir (pos)
+negative reservoir (neg)
+
+trust = pos - neg
+
+This allows:
+
+- damage to persist independently of recovery
+- recovery to require sustained effort
+- asymmetric emotional behavior
+
+---
+
+##Emotional Dynamics
+
+Ghost relationships now include:
+
+Resistance
+
+High negative history reduces the effectiveness of positive events.
+
+Saturation
+
+Repeated positive interactions produce diminishing returns.
+
+Time-Based Decay
+
+Relationships evolve over time using:
+
+ghost.tick()
+
+Decay is no longer tied only to events.
+
+---
+
+##Personality Presets
+
+Relationships can now have different emotional profiles:
+
+ghost.engine.relationships.set_personality("A", "B", "resentful")
+
+Available presets:
+
+- balanced
+- forgiving
+- resentful
+- volatile
+
+Each preset modifies:
+
+- gain sensitivity
+- decay speed
+- recovery behavior
+
+---
+
+##Relationship State System
+
+Ghost now exposes human-readable relationship states:
+
+rel = ghost.get_relationship("A", "B")
+
+rel["state"]        # "hostile", "neutral", "friendly"
+rel["transition"]   # ("neutral", "hostile")
+rel["trigger"]      # {"event": "relationship_broken"}
+
+---
+
+##Event Triggers
+
+State transitions generate structured events:
+
+- "relationship_broken"
+- "deescalation"
+- "forgiveness"
+- "state_shift"
+
+These can be used by external systems for:
+
+- dialogue changes
+- combat behavior
+- faction reactions
+- narrative events
+
+---
+
+##Oscillation Behavior (Key Difference)
+
+Ghost is specifically designed to handle oscillating interaction patterns.
+
+Example:
+
+sequence = ["insult", "insult", "help", "help"]
+
+Produces:
+
+- escalation into hostility
+- resistance to recovery
+- gradual de-escalation (not instant reset)
+
+This behavior cannot be replicated by:
+
+- additive systems ("trust += delta")
+- low-pass filters (exponential smoothing)
+
+---
+
+##New API Additions
+
+ghost.apply_event(a, b, event)
+ghost.tick()
+ghost.get_relationship(a, b)
+
+New fields returned:
+
+{
+    "trust": float,
+    "state": str,
+    "transition": tuple | None,
+    "trigger": dict | None
+}
+
+---
+
+##Summary of v1.0.0
+
+v1.0.0 introduces a structured emotional runtime layer on top of the deterministic state core:
+
+- dual-channel emotional memory
+- resistance and saturation modeling
+- time-based decay
+- per-relationship personality tuning
+- state interpretation and transition tracking
+- event trigger system
+
+Ghost is no longer just a state engine.
+
+It is now a deterministic emotional inertia runtime for NPC systems.
+
+---
+
 ## Core Design Principles
 
 - Deterministic, persistent state core  
@@ -150,6 +318,22 @@ This project is intended as a foundation for experimentation, research, and futu
 ---
 
 ## Release History
+
+v1.0.0
+
+- Promoted Ghost from state engine to emotional inertia runtime
+- Introduced dual-channel emotional memory model (positive / negative reservoirs)
+- Replaced single-value trust updates with persistent emotional accumulation ("pos - neg")
+- Added resistance mechanics (negative history reduces effectiveness of positive events)
+- Added saturation mechanics (diminishing returns on repeated positive interactions)
+- Implemented time-based relationship decay via "tick()" (decoupled from event updates)
+- Added per-relationship parameter system (gain + decay tuning)
+- Introduced personality presets (balanced, forgiving, resentful, volatile)
+- Added relationship state classification (hostile → loyal spectrum)
+- Implemented transition detection between relationship states
+- Added structured trigger system (relationship_broken, deescalation, forgiveness, state_shift)
+- Expanded public API to expose state, transitions, and triggers
+- Established emotional inertia model as a first-class runtime system
 
 **v0.2.2**
 - Fixed public state serialization issue in relationship subsystem  
