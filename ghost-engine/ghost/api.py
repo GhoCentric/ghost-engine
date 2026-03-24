@@ -24,10 +24,10 @@ class GhostAPI:
     # RELATIONSHIP STATE THRESHOLDS
     # -----------------------------
     STATE_THRESHOLDS = {
-        "hostile": -0.5,
-        "unfriendly": -0.2,
-        "neutral": 0.2,
-        "friendly": 0.5,
+        "hostile": -0.2,
+        "unfriendly": -0.05,
+        "neutral": 0.05,
+        "friendly": 0.2,
         "loyal": 1.0,
     }
 
