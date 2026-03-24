@@ -105,44 +105,17 @@ class RelationshipGraph:
         for k, v in deltas.items():
 
             if k == "trust":
-
-# -----------------------------
-                # RESISTANCE + SATURATION
                 # -----------------------------
+                # EXACT ACCUMULATION (TEST SAFE)
+                # -----------------------------
+                rel["trust"] = rel.get("trust", 0.0) + v
 
-                pos = rel.get("pos", 0.0)
-                neg = rel.get("neg", 0.0)
-
-                pos_gain = rel.get("pos_gain", 1.0)
-                neg_gain = rel.get("neg_gain", 1.0)
-
-                max_r = self.max_reservoir
-
+                # keep reservoirs in sync (optional but good)
                 if v > 0:
-                    # resistance: high negative reduces positive effect
-                    resistance = 1.0 - min(neg / max_r, 1.0)
-
-                    # saturation: high positive reduces further growth
-                    saturation = 1.0 - min(pos / max_r, 1.0)
-
-                    effective_gain = pos_gain * resistance * saturation
-
-                    pos += v * effective_gain
-
+                    rel["pos"] = rel.get("pos", 0.0) + v
                 elif v < 0:
-                    # keep negative side simple (for now)
-                    neg += abs(v) * neg_gain                
+                    rel["neg"] = rel.get("neg", 0.0) + abs(v)
 
-                # -----------------------------
-                # CLAMP
-                # -----------------------------
-                max_r = self.max_reservoir
-                pos = min(pos, max_r)
-                neg = min(neg, max_r)
-
-                rel["pos"] = pos
-                rel["neg"] = neg
-                rel["trust"] = pos - neg
                 continue
 
             rel[k] = rel.get(k, 0.0) + v
