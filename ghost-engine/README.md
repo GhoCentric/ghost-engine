@@ -43,7 +43,7 @@ All public-facing state is exposed as dictionaries and is safe to serialize.
 
 ---
 
-##Emotional Inertia System (v1.0.0)
+## Emotional Inertia System (v1.0.0)
 
 Ghost now includes a deterministic emotional inertia system for modeling NPC relationships over time.
 
@@ -62,7 +62,7 @@ Where traditional systems reset or average out, Ghost preserves emotional direct
 
 ---
 
-##Dual-Channel Relationship Model
+## Dual-Channel Relationship Model
 
 Relationships are no longer a single value.
 
@@ -81,7 +81,7 @@ This allows:
 
 ---
 
-##Emotional Dynamics
+## Emotional Dynamics
 
 Ghost relationships now include:
 
@@ -103,7 +103,7 @@ Decay is no longer tied only to events.
 
 ---
 
-##Personality Presets
+## Personality Presets
 
 Relationships can now have different emotional profiles:
 
@@ -124,7 +124,7 @@ Each preset modifies:
 
 ---
 
-##Relationship State System
+## Relationship State System
 
 Ghost now exposes human-readable relationship states:
 
@@ -136,7 +136,7 @@ rel["trigger"]      # {"event": "relationship_broken"}
 
 ---
 
-##Event Triggers
+## Event Triggers
 
 State transitions generate structured events:
 
@@ -154,7 +154,7 @@ These can be used by external systems for:
 
 ---
 
-##Oscillation Behavior (Key Difference)
+## Oscillation Behavior (Key Difference)
 
 Ghost is specifically designed to handle oscillating interaction patterns.
 
@@ -175,7 +175,7 @@ This behavior cannot be replicated by:
 
 ---
 
-##New API Additions
+## New API Additions
 
 ghost.apply_event(a, b, event)
 ghost.tick()
@@ -192,7 +192,7 @@ New fields returned:
 
 ---
 
-##Summary of v1.0.0
+## Summary of v1.0.0
 
 v1.0.0 introduces a structured emotional runtime layer on top of the deterministic state core:
 
