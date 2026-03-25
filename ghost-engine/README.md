@@ -173,57 +173,119 @@ This behavior cannot be replicated by:
 - additive systems ("trust += delta")
 - low-pass filters (exponential smoothing)
 
-Proof Demo (v1.0.0)
+## Proof Demo Fix (v1.0.1)
 
-Ghost now includes a deterministic proof demo comparing its emotional inertia model against a standard linear baseline.
+v1.0.1 finalizes the proof demo as a fully packaged, runnable experience.
 
-Run:
+The demo is now:
+
+- Accessible via CLI (`ghost-demo`)
+- Import-safe with a proper `main()` entry point
+- Packaged inside the library (`ghost.examples`)
+- Usable without cloning the repository
+
+This ensures that any developer installing Ghost via pip can immediately run and verify the system behavior.
+
+### Run
 
 ```bash
-python examples/relationship_proof_demo.py
+ghost-demo
 ```
 
-What this demonstrates:
+Or:
+
+```bash
+python -m ghost.examples.relationship_proof_demo
+```
+
+---
+
+## Proof Demo (v1.0.0)
+
+Ghost includes a deterministic proof demo comparing its emotional inertia model against a standard linear baseline.
+
+### Run
+
+As a CLI tool (recommended):
+
+```bash
+ghost-demo
+```
+
+Or as a module:
+
+```bash
+python -m ghost.examples.relationship_proof_demo
+```
+
+---
+
+### What this demonstrates
 
 Two systems receive the exact same sequence of inputs:
 
-    help → help → insult → help → help → betrayal → help
-
-Baseline (linear smoothing):
-- Gradually returns toward neutral
-- Does not retain strong emotional history
-
-Ghost:
-- Accumulates emotional weight
-- Resists recovery after damage
-- Maintains directional state over time
-
-Example Output:
-
+```text
+help → help → insult → help → help → betrayal → help
 ```
+
+---
+
+### Baseline (linear smoothing)
+
+- Gradually returns toward neutral  
+- Does not retain strong emotional history  
+
+---
+
+### Ghost (emotional inertia)
+
+- Accumulates emotional weight  
+- Resists recovery after damage  
+- Maintains directional state over time  
+
+---
+
+### Example Output
+
+```text
 Step | Event     | Baseline | Ghost   | State
 ------------------------------------------------
 5    | betrayal  | -0.121   | -0.703  | hostile
 6    | help      | -0.036   | -0.628  | hostile
 ```
 
-Key Observation:
+---
 
-Even after positive input ("help"), Ghost remains in a hostile state due to accumulated negative history, while the baseline system rapidly normalizes.
+### Key Observation
 
-This demonstrates:
+Even after positive input (`help`), Ghost remains in a hostile state due to accumulated negative history, while the baseline system rapidly normalizes.
 
-- persistent emotional memory  
-- resistance to reversal  
-- non-linear recovery behavior  
+---
 
-The demo also exposes:
+### What this proves
 
-state transitions (friendly → hostile)  
-trigger events (relationship_broken, forgiveness, etc.)  
-gameplay-relevant consequences of emotional state  
+- Persistent emotional memory  
+- Resistance to reversal  
+- Non-linear recovery behavior  
 
-This serves as a minimal, reproducible proof that Ghost behaves fundamentally differently from traditional smoothing or accumulation systems.
+---
+
+### Additional signals exposed
+
+- State transitions (friendly → neutral → hostile)  
+- Trigger events (`relationship_broken`, `forgiveness`, etc.)  
+- Gameplay-relevant consequences of emotional state  
+
+---
+
+### Summary
+
+This demo is a minimal, reproducible proof that Ghost behaves fundamentally differently from:
+
+- Additive systems (`trust += delta`)  
+- Linear smoothing systems (EMA / low-pass filters)  
+
+Ghost introduces **stateful emotional inertia**, not just value smoothing.
 ---
 
 ## New API Additions
