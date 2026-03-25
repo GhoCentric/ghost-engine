@@ -1,120 +1,124 @@
+"""
+Ghost Engine v1.0.0
+Emotional Inertia Proof Demo
+
+This demo compares:
+1) A simple linear smoothing baseline (EMA filter)
+2) Ghost emotional inertia runtime
+
+Goal:
+Show how Ghost retains emotional weight after betrayal,
+while the baseline rapidly normalizes.
+
+Run:
+    python examples/relationship_proof_demo.py
+"""
+
 from ghost import GhostAPI
 
 
-# -----------------------------
-# BASELINE MODEL (NO MEMORY)
-# -----------------------------
+# --------------------------------------------------
+# BASELINE: Linear smoothing (no state transitions)
+# --------------------------------------------------
 def baseline_step(prev, value, alpha=0.2):
     trust = prev * (1 - alpha) + value * alpha
     return max(min(trust, 1.0), -1.0)
 
 
-# -----------------------------
-# RUN DEMO
-# -----------------------------
+# --------------------------------------------------
+# DEMO SEQUENCE
+# --------------------------------------------------
 def run_demo():
     ghost = GhostAPI()
 
-    print("\n=== GHOST vs BASELINE PROOF DEMO ===\n")
+    print("\n=== GHOST vs LINEAR BASELINE ===\n")
 
+    # Gameplay-like interaction sequence
     sequence = [
         ("help", 0.3),
         ("help", 0.3),
-
-        ("insult", -0.5),  # BIG betrayal
-
+        ("insult", -0.5),
         ("help", 0.3),
         ("help", 0.3),
-
-        ("betrayal", 1.0),  # repeated damage
-
+        ("betrayal", 1.0),
         ("help", 0.3),
     ]
 
     baseline = 0.0
-    g_trust = 0.0
 
-    print(f"{'Step':<4} | {'Event':<7} | {'Baseline':<8} | {'Ghost':<8} | {'State':<12} | {'Δ'}")
-    print("-" * 75)
+    print(f"{'Step':<4} | {'Event':<9} | {'Baseline':<9} | {'Ghost':<9} | {'State':<12}")
+    print("-" * 70)
 
     for i, (event, val) in enumerate(sequence):
-        # --- baseline ---
+
+        # ----- Baseline update -----
         baseline = baseline_step(baseline, val)
 
-        # --- ghost ---
-        ghost.apply_event("A", "B", {
+        # ----- Ghost update -----
+        ghost.apply_event("Player", "Villager", {
             "type": event,
             "intensity": abs(val)
         })
+
         ghost.engine.relationships.tick()
 
-        rel = ghost.get_relationship("A", "B")
+        rel = ghost.get_relationship("Player", "Villager")
         g_trust = rel["trust"]
-
-        # 🔥 REAL STATE FROM ENGINE
         state = rel.get("state", "unknown")
-
-        diff = g_trust - baseline
         trigger = rel.get("trigger")
-
-        # -----------------------------
-        # IMPACT TAGGING (CLEAN)
-        # -----------------------------
-        impact = ""
-
-        if i > 0:
-            if g_trust < baseline:
-                impact = "<- holding"
-            if g_trust < -0.1:
-                impact = "<- degrading"
 
         print(
             f"{i:<4} | "
-            f"{event:<7} | "
-            f"{baseline:<8.3f} | "
-            f"{g_trust:<8.3f} | "
-            f"{state:<12} | "
-            f"{diff:+.3f} {impact}"
+            f"{event:<9} | "
+            f"{baseline:<9.3f} | "
+            f"{g_trust:<9.3f} | "
+            f"{state:<12}"
         )
 
+        # ----- Transition Feedback -----
         if trigger:
-            trigger_event = trigger.get("event")
-
-            if trigger_event == "relationship_broken":
-                print("    ⚠ RELATIONSHIP BROKEN")
-
-            elif trigger_event == "forgiveness":
-                print("    ✓ trust improved")
-
-            elif trigger_event == "deescalation":
-                print("    ↓ tension reduced")
-
+            if trigger.get("event") == "relationship_broken":
+                print("      ⚠ Relationship permanently damaged")
+            elif trigger.get("event") == "forgiveness":
+                print("      ✓ Forgiveness triggered")
+            elif trigger.get("event") == "deescalation":
+                print("      ↓ Emotional tension reduced")
             else:
-                print(f"    ↔ state shift ({trigger.get('from')} → {trigger.get('to')})")
-  
-    # -----------------------------
-    # INTERPRETATION
-    # -----------------------------
-    print("\n--- INTERPRETATION ---")
-    print("Baseline = forgets quickly (smooth recovery)")
-    print("Ghost    = carries emotional weight (inertia)")
-    print("Difference shows memory + resistance to change\n")
+                print(f"      ↔ State change: {trigger.get('from')} → {trigger.get('to')}")
 
-    # -----------------------------
-    # FINAL VERDICT
-    # -----------------------------
-    print("=== FINAL VERDICT ===")
+    # --------------------------------------------------
+    # Gameplay Simulation
+    # --------------------------------------------------
+    print("\n--- GAMEPLAY SIMULATION ---")
+
+    if state == "hostile":
+        print("Villager: 'I will never trust you again.'")
+        print("→ NPC refuses quests.")
+    elif state == "unfriendly":
+        print("Villager: 'I'm not sure I like you.'")
+    elif state == "friendly":
+        print("Villager: 'You have my support.'")
+
+    # --------------------------------------------------
+    # Final Comparison
+    # --------------------------------------------------
+    print("\n--- INTERPRETATION ---")
+    print("Baseline: Gradually smooths back toward neutral.")
+    print("Ghost: Retains emotional memory after betrayal.")
+    print("Result: Persistent emotional inertia.\n")
+
+    print("=== FINAL RESULT ===")
 
     if g_trust < baseline:
-        print("Ghost retained negative emotional state.")
-        print("Baseline recovered.")
-        print("-> Emotional inertia confirmed.")
+        print("Ghost retained negative state.")
+        print("Baseline normalized.")
+        print("✔ Emotional inertia confirmed.")
     else:
         print("No meaningful difference detected.")
 
 
-# -----------------------------
+# --------------------------------------------------
 # RUN
-# -----------------------------
+# --------------------------------------------------
 if __name__ == "__main__":
     run_demo()
